@@ -1,0 +1,87 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.chat-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.status {
+  margin: 0.25rem 0;
+}
+.status-closed {
+  color: var(--muted);
+}
+.notice {
+  display: block;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  background: var(--warn-bg);
+  border-radius: 4px;
+}
+.messages {
+  height: 22rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.messages ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.message {
+  max-width: 80%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  background: var(--bubble);
+  align-self: flex-start;
+}
+.message.mine {
+  align-self: flex-end;
+  background: var(--bubble-mine);
+}
+.message.sending {
+  opacity: 0.7;
+}
+.author {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+.time {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.content {
+  margin: 0.15rem 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.typing {
+  min-height: 1.4rem;
+  margin: 0;
+  color: var(--muted);
+  font-style: italic;
+}
+.error {
+  margin: 0;
+  color: var(--error);
+  font-weight: 600;
+}
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.composer textarea {
+  resize: vertical;
+}
+.composer button {
+  align-self: flex-start;
+}

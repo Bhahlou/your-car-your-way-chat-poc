@@ -1,0 +1,57 @@
+<h1>Service client</h1>
+
+<div class="two-columns">
+  <section aria-labelledby="history-title" class="card">
+    <h2 id="history-title">Mes conversations</h2>
+
+    @if (!hasActiveConversation) {
+      <form (submit)="$event.preventDefault(); openConversation()">
+        <label for="reservation">Numéro de réservation concernée (facultatif)</label>
+        <input id="reservation" type="text" inputmode="numeric" [value]="reservationId()" (input)="onReservationInput($event)" />
+        <button type="submit">Contacter le service client</button>
+      </form>
+      @if (error(); as message) {
+        <p class="error" role="alert">{{ message }}</p>
+      }
+    }
+
+    @if (conversations().length === 0) {
+      <p class="muted">Vous n'avez encore aucune conversation.</p>
+    } @else {
+      <ul class="list">
+        @for (conversation of conversations(); track conversation.id) {
+          <li>
+            <button
+              type="button"
+              class="link-button"
+              [attr.aria-current]="selected()?.id === conversation.id ? 'true' : null"
+              (click)="selectConversation(conversation)"
+            >
+              Conversation n° {{ conversation.id }} du {{ conversation.createdAt | date: 'shortDate' }}
+            </button>
+            <span class="badge" [class]="'badge-' + conversation.status.toLowerCase()">
+              @switch (conversation.status) {
+                @case ('WAITING') { En attente }
+                @case ('OPEN') { En cours }
+                @case ('CLOSED') { Clôturée }
+              }
+            </span>
+            @if (conversation.reservationId) {
+              <span class="muted">· réservation {{ conversation.reservationId }}</span>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </section>
+
+  <div class="card">
+    @if (selected(); as conversation) {
+      @if (user(); as me) {
+        <app-chat-panel [conversation]="conversation" [me]="me" (conversationChange)="onConversationChange($event)" />
+      }
+    } @else {
+      <p class="muted">Ouvrez une conversation pour écrire à un conseiller, disponible 24 h/24.</p>
+    }
+  </div>
+</div>

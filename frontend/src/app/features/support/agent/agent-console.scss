@@ -1,0 +1,5 @@
+/* "Take charge" button pushed to the right of its queue row */
+.list li button:not(.link-button) {
+  margin-top: 0;
+  margin-left: auto;
+}

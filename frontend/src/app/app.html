@@ -1,0 +1,15 @@
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="app-header">
+  <a routerLink="/" class="brand">Your Car Your Way <span class="muted">· PoC tchat</span></a>
+  @if (user(); as me) {
+    <div class="session">
+      <span>{{ me.displayName }} ({{ me.role === 'AGENT' ? 'conseiller' : 'client' }})</span>
+      <button type="button" class="secondary" (click)="logout()">Se déconnecter</button>
+    </div>
+  }
+</header>
+
+<main id="main" tabindex="-1">
+  <router-outlet />
+</main>

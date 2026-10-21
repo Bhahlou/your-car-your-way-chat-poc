@@ -1,0 +1,26 @@
+<h1>Connexion</h1>
+
+<div class="card narrow">
+  <form (submit)="$event.preventDefault(); submit()">
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username" required [value]="email()" (input)="email.set(value($event))" />
+
+    <label for="password">Mot de passe</label>
+    <input id="password" type="password" autocomplete="current-password" required [value]="password()" (input)="password.set(value($event))" />
+
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+    <button type="submit">Se connecter</button>
+  </form>
+</div>
+
+<section class="card narrow" aria-labelledby="demo-title">
+  <h2 id="demo-title">Comptes de démonstration</h2>
+  <p class="muted">Pour la PoC uniquement : un clic remplit le formulaire (mot de passe commun : Password123!).</p>
+  <ul class="list">
+    @for (account of demoAccounts; track account.email) {
+      <li><button type="button" class="link-button" (click)="fill(account)">{{ account.label }}</button></li>
+    }
+  </ul>
+</section>

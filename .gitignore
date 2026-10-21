@@ -1,0 +1,33 @@
+# Java / Maven
+backend/target/
+build/
+*.class
+*.log
+hs_err_pid*
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+npm-debug.log*
+
+# IDE
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+.settings/
+.classpath
+.project
+.factorypath
+
+# Local environment (never commit secrets)
+.env
+*.local
+
+# OS
+.DS_Store
+Thumbs.db

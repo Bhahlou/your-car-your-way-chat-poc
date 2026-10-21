@@ -1,0 +1,86 @@
+<section class="chat" [attr.aria-labelledby]="'chat-title-' + current().id">
+  <header class="chat-header">
+    <h2 [id]="'chat-title-' + current().id">
+      Conversation n° {{ current().id }}
+      @if (current().reservationId) {
+        <span class="muted"> · réservation {{ current().reservationId }}</span>
+      }
+    </h2>
+    <p class="status" [class.status-closed]="isClosed">
+      @switch (current().status) {
+        @case ('WAITING') {
+          @if (me().role === 'CLIENT') {
+            Votre demande est en attente d'un conseiller. Vous pouvez quitter cette page : elle sera conservée.
+          } @else {
+            En attente de prise en charge.
+          }
+        }
+        @case ('OPEN') {
+          Prise en charge par {{ current().agentName }}.
+        }
+        @case ('CLOSED') {
+          Conversation clôturée le {{ current().closedAt | date: 'short' }}.
+        }
+      }
+    </p>
+    @if (!chatSocket.connected()) {
+      <output class="notice">Reconnexion en cours…</output>
+    }
+  </header>
+
+  <div #messageList class="messages" tabindex="0" aria-label="Historique des messages">
+    @if (messages().length === 0 && pending().length === 0) {
+      <p class="muted empty">Aucun message pour le moment.</p>
+    }
+    <ul>
+      @for (message of messages(); track message.id) {
+        <li class="message" [class.mine]="message.authorId === me().id">
+          <span class="author">{{ message.authorId === me().id ? 'Vous' : message.authorName }}</span>
+          <span class="time"><time [attr.datetime]="message.sentAt">{{ message.sentAt | date: 'shortTime' }}</time></span>
+          <p class="content">{{ message.content }}</p>
+        </li>
+      }
+      @for (content of pending(); track $index) {
+        <li class="message mine sending">
+          <span class="author">Vous</span>
+          <span class="time">Envoi…</span>
+          <p class="content">{{ content }}</p>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <p class="typing" aria-hidden="true">
+    @if (typingName(); as name) {
+      {{ name }} est en train d'écrire…
+    }
+  </p>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (isClosed) {
+    <p class="muted">Cette conversation est terminée. @if (me().role === 'CLIENT') { Vous pouvez en ouvrir une nouvelle depuis la page précédente. }</p>
+  } @else {
+    <form class="composer" (submit)="$event.preventDefault(); sendMessage()">
+      <label [for]="'draft-' + current().id">Votre message</label>
+      <textarea
+        [id]="'draft-' + current().id"
+        rows="3"
+        [maxLength]="maxLength"
+        [value]="draft()"
+        (input)="onInput($event)"
+        (keydown)="onKeydown($event)"
+        aria-describedby="draft-help"
+      ></textarea>
+      <p id="draft-help" class="muted">
+        Entrée pour envoyer, Maj + Entrée pour un saut de ligne.
+        @if (me().role === 'CLIENT') {
+          Ne transmettez jamais de données bancaires par ce canal.
+        }
+      </p>
+      <button type="submit" [disabled]="draft().trim().length === 0">Envoyer</button>
+    </form>
+  }
+</section>

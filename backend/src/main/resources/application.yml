@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: chat-poc
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/ycyw}
+    username: ${DB_USER:ycyw}
+    password: ${DB_PASSWORD:ycyw}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate   # the schema is managed by Flyway only
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true   # /actuator/health/liveness and /readiness
+
+app:
+  jwt:
+    # HMAC (HS256) secret used to sign JWTs. Dev value only: in production it comes from Key Vault.
+    secret: ${JWT_SECRET:dev-only-secret-change-me-dev-only-secret-change-me}
+    ttl: 15m
+  chat:
+    allowed-origins: ${CHAT_ALLOWED_ORIGINS:http://localhost:4200}
+  seed-demo-users: ${SEED_DEMO_USERS:false}   # creates 4 demo accounts (see README)

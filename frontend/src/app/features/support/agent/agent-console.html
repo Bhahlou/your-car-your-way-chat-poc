@@ -1,0 +1,65 @@
+<h1>Console conseiller</h1>
+
+<div class="two-columns">
+  <div>
+    <section aria-labelledby="queue-title" class="card">
+      <h2 id="queue-title">File d'attente ({{ queue().length }})</h2>
+      @if (message(); as text) {
+        <p class="error" role="alert">{{ text }}</p>
+      }
+      @if (queue().length === 0) {
+        <p class="muted">Aucune conversation en attente.</p>
+      } @else {
+        <ol class="list">
+          @for (conversation of queue(); track conversation.id) {
+            <li>
+              <strong>{{ conversation.clientName }}</strong>
+              <span class="muted">
+                · depuis {{ conversation.createdAt | date: 'shortTime' }}
+                @if (conversation.reservationId) { · réservation {{ conversation.reservationId }} }
+              </span>
+              <button type="button" (click)="claimConversation(conversation)">
+                Prendre en charge<span class="visually-hidden"> la conversation de {{ conversation.clientName }}</span>
+              </button>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+
+    <section aria-labelledby="assigned-title" class="card">
+      <h2 id="assigned-title">Mes conversations en cours ({{ assigned().length }})</h2>
+      @if (assigned().length === 0) {
+        <p class="muted">Aucune conversation en cours.</p>
+      } @else {
+        <ul class="list">
+          @for (conversation of assigned(); track conversation.id) {
+            <li>
+              <button
+                type="button"
+                class="link-button"
+                [attr.aria-current]="selected()?.id === conversation.id ? 'true' : null"
+                (click)="selectConversation(conversation)"
+              >
+                {{ conversation.clientName }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+
+  <div class="card">
+    @if (selected(); as conversation) {
+      @if (user(); as me) {
+        <app-chat-panel [conversation]="conversation" [me]="me" (conversationChange)="onConversationChange($event)" />
+        @if (conversation.status === 'OPEN') {
+          <button type="button" class="secondary" (click)="closeConversation(conversation)">Clôturer la conversation</button>
+        }
+      }
+    } @else {
+      <p class="muted">Prenez en charge une conversation de la file d'attente pour répondre au client.</p>
+    }
+  </div>
+</div>

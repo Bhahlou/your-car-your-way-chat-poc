@@ -1,0 +1,55 @@
+# Local environment of the PoC (architecture §5.6): front (Nginx) -> back (Spring Boot) -> db (PostgreSQL 18).
+# Start: docker compose up --build        Application: http://localhost:4200
+name: ycyw-chat-poc
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ycyw}
+      POSTGRES_USER: ${DB_USER:-ycyw}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ycyw}
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ycyw} -d ${DB_NAME:-ycyw}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [internal] # reachable only from the back end, as in production
+
+  back:
+    build: ./backend
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/${DB_NAME:-ycyw}
+      DB_USER: ${DB_USER:-ycyw}
+      DB_PASSWORD: ${DB_PASSWORD:-ycyw}
+      JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-dev-only-secret-change-me}
+      SEED_DEMO_USERS: "true" # demo accounts: never in production
+      CHAT_ALLOWED_ORIGINS: http://localhost:4200
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/8080 && printf \"GET /actuator/health/readiness HTTP/1.0\r\n\r\n\" >&3 && grep -q UP <&3'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+    networks: [internal, web]
+
+  front:
+    build: ./frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      back:
+        condition: service_healthy
+    networks: [web]
+
+networks:
+  internal:
+  web:
+
+volumes:
+  db-data:

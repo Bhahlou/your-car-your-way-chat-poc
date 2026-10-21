@@ -1,0 +1,12 @@
+/* Layout shared by the customer area and the agent console: list on the left, conversation on the right. */
+.two-columns {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(16rem, 1fr) 2fr;
+  align-items: start;
+}
+@media (max-width: 48rem) {
+  .two-columns {
+    grid-template-columns: 1fr;
+  }
+}
