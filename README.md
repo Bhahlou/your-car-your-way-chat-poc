@@ -9,7 +9,7 @@ PostgreSQL 18, WebSocket/STOMP, Docker. Ce n'est pas le produit final : ni rése
 Prérequis : **Docker Desktop** (ou Docker Engine + Compose). Rien d'autre à installer.
 
 ```bash
-git clone <url-du-depot>
+git clone https://github.com/Bhahlou/your-car-your-way-chat-poc.git
 cd your-car-your-way-chat-poc
 docker compose up --build
 ```
